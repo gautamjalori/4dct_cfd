@@ -29,9 +29,9 @@ colors = px.colors.sequential.Jet
 
 #%% Load the cp locations as calulcated from slicer. Prior to this the control points are defined using remeshing, manually tweaked, and loaded into slicer with the dynamic registration computed
 
-work_dir = '/Users/mbarb1/OneDrive - UW/RobinSequence/Data/Area and Volume Data/4DCT_analysis/Subj05/dynamic_motion_testing/'
+work_dir = 'D:/Jalori/RobinSequence/4DCT/Subj05/'
 cmap =  plt.cm.get_cmap("jet", 10)
-cp_files = sorted(glob.glob(work_dir + "transformed_controlPoints_18_24_2mmSpacing_fullAirway/*.fcsv"))
+cp_files = sorted(glob.glob(work_dir + "Airway_4_controlPoints_subsample500_*.fcsv"))
 
 dfs_save = []
 p = pv.Plotter()
@@ -84,7 +84,7 @@ for count,df in enumerate(df_periodic):
 
 #%% Run the interpolation
        
-dt_cfd = 1e-4 
+dt_cfd = 0.01
 period_length = 0.7
 new_time = np.arange(0, period_length+dt_cfd, dt_cfd)    
 x_new, y_new, z_new = interpolate_controlPoints_time(df_periodic, 0.1, new_time, show=True)

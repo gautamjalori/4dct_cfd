@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar 19 11:07:42 2024
+Created on Mon Apr  8 16:13:07 2024
 
-@author: mbarb1
+@author: jalori
 """
 
 import pyvista as pv
@@ -19,7 +18,7 @@ import plotly.express as px
 import plotly.io as pio
 from plotly.subplots import make_subplots
 
-from source.star_control_points import *
+# from source.star_control_points import *
 
 
 pio.renderers.default = "browser"
@@ -32,7 +31,7 @@ work_dir = '/Jalori/RobinSequence/4DCT/Subj05/'
 surface_file_dir = work_dir + "CFD_surfaces/"
 
 surf = pv.read(surface_file_dir + "Airway_18_cap2.stl")
-surfCoarse = pv.read(work_dir+ "control_points_mesh_1000.ply")
+surfCoarse = pv.read(work_dir+ "control_points_mesh_3000.ply")
 
 # surf.scale(1e3, inplace=True)
 # surfCoarse.scale(1e3, inplace=True)
@@ -45,6 +44,7 @@ p.show()
 #%% Manually select points to exclude
 
 coarse_pc = pv.PolyData(surfCoarse.points)
+# coarse_pc = new_cp
 remove_points, remove_ids = pointPickerRemove(coarse_pc, surf)
 
 
@@ -88,17 +88,17 @@ df['visible'] = np.ones(len(df))
 df['locked'] = np.ones(len(df))
 # df = df * 1e-3
 df.index.name='label'
-save_name = work_dir + 'Airway_4_controlPoints_subsample500.fcsv'
+save_name = work_dir + 'Airway_4_controlPoints_3000.fcsv'
 print(save_name)
 df.to_csv(save_name)
 
 #%% Loop and save the cp locations !!! This gets dropped into the slicer python interpretor window
 
-save_dir = 'D:/Jalori/RobinSequence/4DCT/Subj05/'
+save_dir = 'D:/Jalori/RobinSequence/4DCT/Subj05/seq_reg_cp_3000'
 prefix = "Airway_4_controlPoints_subsample500_"
 transformSequenceID = 'vtkMRMLSequenceNode3' # name of sequence node with registration
 
-controlPointNode = getNode("Airway_4_controlPoints_subsample500_3")
+controlPointNode = getNode("Airway_4_controlPoints_3000_1")
 
 shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
 itemIDToClone = shNode.GetItemByDataNode(controlPointNode)
@@ -124,15 +124,12 @@ for node_idx in range(7):
     outputFileName = save_dir + f"{prefix}_{save_id:03}.fcsv"
     print(outputFileName)
     slicer.util.saveNode(clonedControlPointNode, outputFileName)
-
-####### Swith ovr to Subj056_cp_interp....
-
-
-
+    
 #%% Load the cp locations as calulcated from slicer. Prior to this the control points are defined using remeshing, manually tweaked, and loaded into slicer with the dynamic registration computed
 
+work_dir = 'D:/Jalori/RobinSequence/4DCT/Subj05/seq_reg_cp_3000/'
 cmap =  plt.cm.get_cmap("jet", 10)
-cp_files = sorted(glob.glob(work_dir + 'control_points_start4/*.fcsv'))
+cp_files = sorted(glob.glob(work_dir + "Airway_4_controlPoints_3000__*.fcsv"))
 
 dfs_save = []
 p = pv.Plotter()
@@ -140,7 +137,8 @@ polys = []
 for count,file in enumerate(cp_files):
     
     print(file)
-    df_mod = pd.read_csv(file, skiprows=3, usecols=[0,1,2,3], names=['id','X','Y','Z'])
+    df_mod = pd.read_csv(file, skiprows=3, 
+                     names=['id','X','Y','Z','ow','ox','oy','oz','vis','sel','lock','label','desc','associatedNodeID'])
 
     df_star = df_mod[["X", "Y", "Z"]]
     dfs_save.append(df_star)
@@ -153,42 +151,13 @@ p.show()
 
 
 
-#%% create plot of each set of control points
-
-dfs_reorder = []
-counts = [0,1,2,3,4,5,4,3,2,1,0]
-p = pv.Plotter()
-for count in counts:
-
-    p.add_mesh(polys[count], color=cmap(count)[0:3], label=str(count))
-    
-    df_mod = pd.read_csv(cp_files[count], skiprows=3, usecols=[0,1,2,3], names=['id','X','Y','Z'])
-
-    df_star = df_mod[["X", "Y", "Z"]]
-    dfs_reorder.append(df_star)
-
-p.add_legend()
-p.show()
-
-
-df_periodic = dfs_reorder.copy()
-
-#%% plot the first and last filriodic.append(dfs_skip[0])
-
-es
-p = pv.Plotter()
-p.add_mesh(polys[0], color='red', label = "0")
-p.add_mesh(polys[15], color='blue', label = "15")
-p.add_legend()
-p.show()
-
-
 #%% overwrite the last timestep with the first
 
-
 df_periodic = dfs_save.copy()
-df_periodic[-1] = df_periodic[0]
-
+# df_periodic[-1] = df_periodic[0]
+# df_periodic = np.append(df_periodic, np.atleast_3d(np.transpose(np.stack(np.atleast_3d(df_periodic[0]), axis = 1))), axis = 0)
+# df_periodic = [df_periodic] + [np.transpose(np.stack(np.atleast_3d(df_periodic[0]), axis = 1))]
+df_periodic = df_periodic + [df_periodic[0]]
 
 #%% Stack all of the control points into arrays
 
@@ -212,32 +181,41 @@ for count,df in enumerate(df_periodic):
     y_all[count,:] = y
     z_all[count,:] = z
 
-#%% save just the control points - no interpolation
-df_periodic_star = periodic_star_table_IncDisp_fromArraysV2(x_all, y_all, z_all, dt=0.1, n_cycles=3, start_time=0.0)  
-df_periodic_star = df_periodic_star*1e-3
-df_periodic_star.to_csv(work_dir +"StarControlPoinstFull_4start_subsample500_reorder_Periodic_3Cycles_Inc_noInterp.csv", index=False)
-
 
 #%% Run the interpolation
-
-dt_image= 0.1
-dt_cfd = 0.01
-period_length = 1.0
-new_time = np.arange(0, period_length+dt_cfd, dt_cfd)    
-x_new, y_new, z_new = interpolate_controlPoints_time(df_periodic, dt_image, new_time, show=True)
+       
+dt_cfd = 0.0001
+start_time = 0
+period_length = 0.7 # amount of time for each cycle
+dt_ct = 0.1
+new_time = np.arange(start_time, round(start_time+period_length+dt_cfd, 5), dt_cfd)    
+x_new, y_new, z_new = interpolate_controlPoints_time(df_periodic, dt_ct, new_time, show=True)
 
 
 
 #%% create new df structure for repeating and saving - Total Displcement
 
-df_periodic_star = periodic_star_table_totalDisp_fromArrays(x_new, y_new, z_new, dt=0.01, n_cycles=3)  
+
+df_periodic_star = periodic_star_table_totalDisp_fromArraysV2(x_new, y_new, z_new, dt=0.01, n_cycles=3)  
 df_periodic_star = df_periodic_star*1e-3
-df_periodic_star.to_csv(work_dir +"StarControlPoinstFull_0start_subsample1000_Periodic_3Cycles_Total_interpolated_001s.csv", index=False)
+df_periodic_star.to_csv(work_dir +"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Total_interpolated_01s_append.csv", index=False)
 
 #%% Create the datafrom for star - incremental displacement
 
-df_periodic_star = periodic_star_table_IncDisp_fromArraysV2(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=2.0)  
-df_periodic_star = df_periodic_star*1e-3
-df_periodic_star.to_csv(work_dir +"StarControlPoinstFull_4start_subsample500_reorder_Periodic_3Cycles_Inc_interpolated_01_3.csv", index=False)
 
 
+# df_periodic_star = periodic_star_table_IncDisp_fromArraysV2(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=0.7)  
+# df_periodic_star = df_periodic_star*1e-3
+# df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_0001s_cycle_whole2.csv", index=False)
+end_time = 2.1
+start_time_split = 0.0
+iter = np.arange(start_time_split, end_time, dt_ct)
+
+for i in iter:
+    df_periodic_star = periodic_star_table_IncDisp_fromArrays_split(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=i, div=7, cycle_len=0.7)
+    df_periodic_star = df_periodic_star*1e-3
+    df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_0001s_cycle{i*10}.csv", index=False)
+
+# df_periodic_star = periodic_star_table_IncDisp_fromArrays_split(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=0.7, div=7, cycle_len=0.7)
+# df_periodic_star = df_periodic_star*1e-3
+# df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_0001s_cycle7.csv", index=False)
