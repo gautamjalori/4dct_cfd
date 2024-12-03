@@ -277,6 +277,227 @@ def periodic_star_table_IncDisp_fromArrays_split(X,Y,Z, dt=0.1, n_cycles=5, star
 
 
 
+def reference_periodic_star_table_IncDisp_fromArrays_split(X,Y,Z, dt=0.1, n_cycles=5, start_time=0.0, div=7, cycle_len=0.7):
+    """
+    Create periodic displacement table for starccm. Displacement is defined as incremnetal displacement: X_n - X_n-1
+    
+    Input is X,Y,Z arrays X[time, positions]
+    dt: delta time between each defined cp
+    n_cycles: number of cycles to repeat for periodic simulation
+    
+    """
+    
+    # if start_time % cycle_len == 0:
+    #     n_time_points = int(len(X[:,0]) * (1/div)) + 1
+    # else:
+    #     n_time_points = int(len(X[:,0]) * (1/div))
+    
+    n_time_points = int(len(X[:,0]) * (1/div)) + 1
+
+    n_control_points = len(X[0,:])
+    
+    
+    all_data_list = []
+    
+    
+    if start_time >= cycle_len:
+        start_time_local = start_time % cycle_len
+        temp_index  = int(round(start_time_local*(1/dt), 5))
+        print(temp_index)
+    else:
+        temp_index  = int(round(start_time*(1/dt), 5))
+        print(temp_index)
+
+    all_data_list.append(pd.DataFrame(data=X[temp_index,:], columns=['X']))
+    all_data_list.append(pd.DataFrame(data=Y[temp_index,:], columns=['Y']))
+    all_data_list.append(pd.DataFrame(data=Z[temp_index,:], columns=['Z']))
+
+    column_x = ["X[t={:1.5f}s]".format(start_time)]
+    column_y = ["Y[t={:1.5f}s]".format(start_time)]
+    column_z = ["Z[t={:1.5f}s]".format(start_time)]
+
+    # if start_time % cycle_len == 0:
+    all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_x))
+    all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_y))
+    all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_z))
+    
+    
+    time_count = 1
+    for n_cycle in range(n_cycles):
+        for count in range(1,n_time_points):
+            if start_time >= cycle_len:
+                start_time_local = start_time % cycle_len
+                count = count + int((start_time_local/cycle_len)*len(X[:,0]))
+            else:
+                count = count + int((start_time/cycle_len)*len(X[:,0]))
+            time =  time_count* dt
+           
+    
+            column_x = ["X[t={:1.5f}s]".format(time + start_time)]
+            column_y = ["Y[t={:1.5f}s]".format(time + start_time)]
+            column_z = ["Z[t={:1.5f}s]".format(time + start_time)]
+            
+            dx = X[count,:] - X[count-1,:]
+            dy = Y[count,:] - Y[count-1,:]
+            dz = Z[count,:] - Z[count-1,:]
+            
+            all_data_list.append(pd.DataFrame(data=dx, columns=column_x))
+            all_data_list.append(pd.DataFrame(data=dy, columns=column_y))
+            all_data_list.append(pd.DataFrame(data=dz, columns=column_z))
+            
+
+            time_count = time_count+1
+        
+    return pd.concat(all_data_list, axis=1)
+
+
+def reference_periodic_star_table_IncDisp_fromArrays_split_01(X,Y,Z, dt=0.1, n_cycles=5, start_time=0.0, div=7, cycle_len=0.7):
+    """
+    Create periodic displacement table for starccm. Displacement is defined as incremnetal displacement: X_n - X_n-1
+    
+    Input is X,Y,Z arrays X[time, positions]
+    dt: delta time between each defined cp
+    n_cycles: number of cycles to repeat for periodic simulation
+    
+    """
+    
+    # if start_time % cycle_len == 0:
+    #     n_time_points = int(len(X[:,0]) * (1/div)) + 1
+    # else:
+    #     n_time_points = int(len(X[:,0]) * (1/div))
+    
+    n_time_points = int(len(X[:,0]) * (1/div)) + 1
+
+    n_control_points = len(X[0,:])
+    
+    
+    all_data_list = []
+    
+    
+    if start_time >= cycle_len:
+        start_time_local = start_time % cycle_len
+        temp_index  = int(round(start_time_local*(1/dt), 5))
+        print(temp_index)
+    else:
+        temp_index  = int(round(start_time*(1/dt), 5))
+        print(temp_index)
+
+    all_data_list.append(pd.DataFrame(data=X[temp_index,:], columns=['X']))
+    all_data_list.append(pd.DataFrame(data=Y[temp_index,:], columns=['Y']))
+    all_data_list.append(pd.DataFrame(data=Z[temp_index,:], columns=['Z']))
+
+    column_x = ["X[t={:1.5f}s]".format(start_time)]
+    column_y = ["Y[t={:1.5f}s]".format(start_time)]
+    column_z = ["Z[t={:1.5f}s]".format(start_time)]
+
+    # if start_time % cycle_len == 0:
+    all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_x))
+    all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_y))
+    all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_z))
+    
+    
+    time_count = 1
+    for n_cycle in range(n_cycles):
+        for count in range(1,n_time_points):
+            if start_time >= cycle_len:
+                start_time_local = start_time % cycle_len
+                count = count + int((start_time_local/cycle_len)*len(X[:,0]))
+            else:
+                count = count + int((start_time/cycle_len)*len(X[:,0]))
+            time =  time_count* dt
+           
+    
+            column_x = ["X[t={:1.5f}s]".format(time + start_time)]
+            column_y = ["Y[t={:1.5f}s]".format(time + start_time)]
+            column_z = ["Z[t={:1.5f}s]".format(time + start_time)]
+            
+            dx = X[count,:] - X[count-1,:]
+            dy = Y[count,:] - Y[count-1,:]
+            dz = Z[count,:] - Z[count-1,:]
+            
+            all_data_list.append(pd.DataFrame(data=dx, columns=column_x))
+            all_data_list.append(pd.DataFrame(data=dy, columns=column_y))
+            all_data_list.append(pd.DataFrame(data=dz, columns=column_z))
+            
+
+            time_count = time_count+1
+        
+    return pd.concat(all_data_list, axis=1)
+
+def target_pos_periodic_star_table_IncDisp_fromArrays_split(X,Y,Z, dt=0.1, n_cycles=5, start_time=0.0, div=7, cycle_len=0.7):
+    """
+    Create periodic displacement table for starccm. Displacement is defined as incremnetal displacement: X_n - X_n-1
+    
+    Input is X,Y,Z arrays X[time, positions]
+    dt: delta time between each defined cp
+    n_cycles: number of cycles to repeat for periodic simulation
+    
+    """
+    
+    # if start_time % cycle_len == 0:
+    #     n_time_points = int(len(X[:,0]) * (1/div)) + 1
+    # else:
+    #     n_time_points = int(len(X[:,0]) * (1/div))
+    
+    n_time_points = int(len(X[:,0]) * (1/div)) + 1
+
+    n_control_points = len(X[0,:])
+    
+    
+    all_data_list = []
+    
+    
+    if start_time >= cycle_len:
+        start_time_local = start_time % cycle_len
+        temp_index  = int(round(start_time_local*100, 5))
+        print(start_time_local)
+    else:
+        temp_index  = int(round(start_time*100, 5))
+
+    all_data_list.append(pd.DataFrame(data=X[temp_index,:], columns=['X']))
+    all_data_list.append(pd.DataFrame(data=Y[temp_index,:], columns=['Y']))
+    all_data_list.append(pd.DataFrame(data=Z[temp_index,:], columns=['Z']))
+
+    # column_x = ["X[t={:1.5f}s]".format(start_time)]
+    # column_y = ["Y[t={:1.5f}s]".format(start_time)]
+    # column_z = ["Z[t={:1.5f}s]".format(start_time)]
+
+    # # if start_time % cycle_len == 0:
+    # all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_x))
+    # all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_y))
+    # all_data_list.append(pd.DataFrame(data=np.zeros(n_control_points), columns=column_z))
+    
+    
+    time_count = 1
+    for n_cycle in range(n_cycles):
+        for count in range(1,n_time_points):
+            if start_time >= cycle_len:
+                start_time_local = start_time % cycle_len
+                count = count + int((start_time_local/cycle_len)*len(X[:,0]))
+            else:
+                count = count + int((start_time/cycle_len)*len(X[:,0]))
+            time =  time_count* dt
+           
+    
+            column_x = ["X[t={:1.5f}s]".format(time + start_time)]
+            column_y = ["Y[t={:1.5f}s]".format(time + start_time)]
+            column_z = ["Z[t={:1.5f}s]".format(time + start_time)]
+            
+            dx = X[count,:]
+            dy = Y[count,:]
+            dz = Z[count,:]
+            
+            all_data_list.append(pd.DataFrame(data=dx, columns=column_x))
+            all_data_list.append(pd.DataFrame(data=dy, columns=column_y))
+            all_data_list.append(pd.DataFrame(data=dz, columns=column_z))
+            
+
+            time_count = time_count+1
+        
+    return pd.concat(all_data_list, axis=1)
+
+
+
 def interpolate_controlPoints_time(df_CT, dt, new_time_array, show=True, n_demo_images=5):
     """
     Perform temporal interpolation between a coarse set of control points.

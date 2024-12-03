@@ -65,7 +65,7 @@ fig = go.Figure()
 fig.add_trace(go.Scatter(y=volume))
 fig.show()
 
-np.savetxt(data_dir / "STL_airway_volumes.txt", volume)
+# np.savetxt(data_dir / "STL_airway_volumes.txt", volume)
     
 
 #%% load in the respiratory phase data

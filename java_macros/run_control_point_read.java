@@ -17,10 +17,10 @@ public class run_control_point_read extends StarMacro {
 
   private void execute0() {
 
-    int n_periods = 3;
+    int n_periods = 21;
     int period_count = 1;
-    Double period_length = 0.4;
-    String control_point_file_prefix = "cylinder_control_points_0.01_incDisp_";
+    Double period_length = 0.1;
+    String control_point_file_prefix = "StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_0001s_cycle";
 
     Simulation simulation_0 = 
       getActiveSimulation();
@@ -45,7 +45,7 @@ public class run_control_point_read extends StarMacro {
       }
 
       // Define and read control points file
-      String control_point_filename = control_point_file_prefix + Integer.toString(period_count) + ".csv";
+      String control_point_filename = control_point_file_prefix + Integer.toString(period_count-1) + ".csv";
       simulation_0.println(control_point_filename);
 
       FileTable fileTable_0 = 

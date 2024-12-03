@@ -29,7 +29,7 @@ public class set_first_control_points extends StarMacro {
     //   throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
     // }
 
-    String control_point_file_prefix = prop.getProperty("control_point_file_prefix");
+    //String control_point_file_prefix = prop.getProperty("control_point_file_prefix");
 
     Simulation simulation_0 = 
       getActiveSimulation();
@@ -37,7 +37,7 @@ public class set_first_control_points extends StarMacro {
     long start = System.nanoTime();
 
     FileTable fileTable_0 = 
-      (FileTable) simulation_0.getTableManager().createFromFile(resolvePath("cylinder_control_points_0.01_incDisp_1.csv"), null);
+      (FileTable) simulation_0.getTableManager().createFromFile(resolvePath("StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_0001s_cycle0.csv"), null);
 
     long finish = System.nanoTime();
     long timeElapsed = finish - start;
