@@ -134,9 +134,13 @@ public class viscous_dissipation extends StarMacro {
     volumeIntegralReport_0.getParts().setQuery(null);
 
     Region region_0 = 
-      simulation_0.getRegionManager().getRegion("Region");
+      simulation_0.getRegionManager().getRegion("Intersect");
+      
+    Region region_1 = 
+      simulation_0.getRegionManager().getRegion("Intersect 2");
 
     volumeIntegralReport_0.getParts().setObjects(region_0);
+    volumeIntegralReport_0.getParts().setObjects(region_1);
 
     volumeIntegralReport_0.printReport();
 
@@ -167,6 +171,7 @@ public class viscous_dissipation extends StarMacro {
     volumeIntegralReport_1.getParts().setQuery(null);
 
     volumeIntegralReport_1.getParts().setObjects(region_0);
+    volumeIntegralReport_0.getParts().setObjects(region_1);
 
     volumeIntegralReport_1.printReport();
 
@@ -209,6 +214,7 @@ public class viscous_dissipation extends StarMacro {
     volumeIntegralReport_2.getParts().setQuery(null);
 
     volumeIntegralReport_2.getParts().setObjects(region_0);
+    volumeIntegralReport_0.getParts().setObjects(region_1);
 
     volumeIntegralReport_2.printReport();
 

@@ -29,7 +29,7 @@ public class parabolic_flow_profile_contd extends StarMacro {
 
     userFieldFunction_1.setDimensions(Dimensions.Builder().length(1).build());
 
-    userFieldFunction_1.setDefinition("0.00265007961");
+    userFieldFunction_1.setDefinition("0.00258347086");
 
 
     UserFieldFunction userFieldFunction_2 = 
@@ -43,7 +43,7 @@ public class parabolic_flow_profile_contd extends StarMacro {
 
     userFieldFunction_2.setDimensions(Dimensions.Builder().length(1).build());
 
-    userFieldFunction_2.setDefinition("[0.007950, -0.149118, -0.297904]");
+    userFieldFunction_2.setDefinition("[-0.011711479630321264, -0.12677614018321037, -0.010797107126563787]");
 
     UserFieldFunction userFieldFunction_3 = 
       simulation_0.getFieldFunctionManager().createFieldFunction();

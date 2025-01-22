@@ -21,15 +21,15 @@ public class run_control_point_SplitFiles extends StarMacro {
 
   private void execute0() {
 
-    int n_periods = 120;
+    int n_periods = 3000;
     int period_count = 0;
-    Double period_length = 0.01;
+    Double period_length = 0.001;
     // String control_point_file_prefix = "StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_ptj05_01s_cycle";
 
     File f = null;
     String[] paths;
 
-    f = new File("/D:/Jalori/RobinSequence/close_valve/cylinder_cosine_constriction/csvs_01/");
+    f = new File("/D:/Jalori/RobinSequence/subj14/cp_sparse_csv_dt001_2/");
     paths = f.list();
 
 
@@ -50,7 +50,7 @@ public class run_control_point_SplitFiles extends StarMacro {
 
         // Method to extract the last numeric part from the string
         private int extractNumber(String s) {
-            String num = s.substring(s.lastIndexOf('e') + 1, s.length() - 4); // Remove ".csv"
+            String num = s.substring(s.lastIndexOf('_') + 1, s.length() - 4); // Remove ".csv"
             return Integer.parseInt(num);
         }
     };

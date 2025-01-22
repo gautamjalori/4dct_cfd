@@ -26,7 +26,7 @@ from stl import mesh
 
 # check_stl_format(file_path)
 
-0.07853981107473373 m
+# 0.07853981107473373 m
 
 
 # # Scale factor
@@ -40,13 +40,13 @@ from stl import mesh
 
 try:
     # Attempt to load the STL file
-    your_mesh = mesh.Mesh.from_file('D:/Jalori/RobinSequence/close_valve/cylinder_cosine_constriction/extended_cylinder/scaled/extended_cylinder_8pi.stl')
+    your_mesh = mesh.Mesh.from_file('D:/Jalori/RobinSequence/subj14/airway_18/Airway_18_simulation_clip_extn_cap.stl')
     print("STL file loaded successfully.")
     
     # Proceed with scaling if loading is successful
-    scale_factor = 0.0025
+    scale_factor = 0.001
     your_mesh.vectors *= scale_factor
-    your_mesh.save('D:/Jalori/RobinSequence/close_valve/cylinder_cosine_constriction/extended_cylinder/scaled/extended_cylinder_scaled.stl')
+    your_mesh.save('D:/Jalori/RobinSequence/subj14/airway_18/Airway_18_simulation_scaled.stl')
     print("STL file scaled and saved.")
 except Exception as e:
     print(f"An error occurred: {e}")

@@ -129,8 +129,8 @@ def breathing_waveform_sinusoid(tidal_volume, period, period_insp, D_inlet, D_mi
     
     period_exp = period - period_insp
     print(period_exp)
-    time_insp = np.linspace(0.001,period_insp,600)
-    time_exp = np.linspace(0,period_exp,601)
+    time_insp = np.linspace(0.001,period_insp,500)
+    time_exp = np.linspace(0,period_exp,501)
 
     # Inspiration phase 1
     Q_insp_2 = -np.sin((np.pi/(period_insp-0.001))*(time_insp-0.001))
@@ -181,30 +181,30 @@ def breathing_waveform_sinusoid(tidal_volume, period, period_insp, D_inlet, D_mi
     return Q, time                                                                      
     
 
-tidal_volume = 3.92*6
-period = 0.7
-period_insp = 0.3374
-D_inlet = 1
-D_min = 1
-
-Q, time = breathing_waveform_sinusoid(tidal_volume, period, period_insp, D_inlet, D_min)
-
-# tidal_volume = 3.07*6
-# exp_tidal_volume = 9.89
-# # exp_tidal_volume = 3.07*6
-# period = 1.2
-# period_insp = 0.6
+# tidal_volume = 3.92*6
+# period = 0.7
+# period_insp = 0.3374
 # D_inlet = 1
 # D_min = 1
 
 # Q, time = breathing_waveform_sinusoid(tidal_volume, period, period_insp, D_inlet, D_min)
 
+tidal_volume = 3.07*6
+exp_tidal_volume = tidal_volume
+# exp_tidal_volume = 3.07*6
+period = 1.0
+period_insp = 0.5
+D_inlet = 1
+D_min = 1
+
+Q, time = breathing_waveform_sinusoid(tidal_volume, period, period_insp, D_inlet, D_min)
+
 
   
-# DF = pd.DataFrame(Q, time) 
-# plt.plot(time, Q)
-# work_dir = 'D:/Jalori/RobinSequence/close_valve/new_cylinder_motion/new_approach/moving_mesh_scaled_expiration/data.csv'  
-# DF.to_csv(work_dir)
+DF = pd.DataFrame(Q, time) 
+plt.plot(time, Q)
+work_dir = 'D:/Jalori/RobinSequence/Subj14/data.csv'  
+DF.to_csv(work_dir)
 
 
 

@@ -31,7 +31,7 @@ public class read_control_points extends StarMacro {
     int numFiles = 0;
 
 
-    f = new File("D:/Jalori/RobinSequence/close_valve/new_cylinder_motion/moving_mesh_interface_pressure_boundary/csvs_dt001/");
+    f = new File("D:/Jalori/RobinSequence/subj14/cp_sparse_csv_dt001_2/");
     paths = f.list();
 
 

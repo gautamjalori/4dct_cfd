@@ -17,7 +17,7 @@ public class rs_interfaceBoundary extends StarMacro {
 
   private void execute0() {
 
-    int n_periods = 360;
+    int n_periods = 300;
     int period_count = 0;
     Double period_length = 0.01;
     // String control_point_file_prefix = "StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_ptj05_01s_cycle";
@@ -25,7 +25,7 @@ public class rs_interfaceBoundary extends StarMacro {
     File f = null;
     String[] paths;
 
-    f = new File("D:/Jalori/RobinSequence/close_valve/new_cylinder_motion/moving_mesh_interface_pressure_boundary/csvs_dt001/");
+    f = new File("D:/Jalori/RobinSequence/subj14/cp_csv_dt001/");
     paths = f.list();
 
 
@@ -183,7 +183,7 @@ public class rs_interfaceBoundary extends StarMacro {
           ((InternalInterface) simulation_0.get(ConditionTypeManager.class).get(InternalInterface.class));
           boundaryInterface_0.setInterfaceType(internalInterface_0);
       }
-      */
+      
       
       if (time == 0.6){
           boundaryInterface_0.swapBoundaries();
@@ -192,7 +192,7 @@ public class rs_interfaceBoundary extends StarMacro {
       if (time == 1.2){
           boundaryInterface_0.swapBoundaries();
       }
-      /*
+      
       
       if ((time >= 1.5) && (time < 1.52)){
           //switch to PM - closing

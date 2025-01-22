@@ -10,9 +10,9 @@ def extract_numeric_value(file_name):
     else:
         raise ValueError(f"Numeric value not found in file name: {file_name}")
  
-png_folder = 'D:/Jalori/RobinSequence/close_valve/new_cylinder_motion/new_approach/moving_mesh_scale_expiration_pressure_boundary/data/velocity_mag'
-output_video_path = 'D:/Jalori/RobinSequence/close_valve/new_cylinder_motion/new_approach/moving_mesh_scale_expiration_pressure_boundary/data/velocity_mag/output_video.mp4'
-fps = 10  # Adjust as needed
+png_folder = 'D:/Jalori/RobinSequence/Subj14/CFD/no_interface/scenes/velocity_mag'
+output_video_path = 'D:/Jalori/RobinSequence/Subj14/CFD/no_interface/scenes/velocity_mag/output_video.mp4'
+fps = 50  # Adjust as needed
 
 # Get all PNG files in the folder
 png_files = [f for f in os.listdir(png_folder) if f.endswith('.png')]

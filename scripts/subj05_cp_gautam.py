@@ -26,12 +26,12 @@ colors = px.colors.sequential.Jet
 
 #%% Load in the original and remeshed surfaces
 
-work_dir = '/Jalori/RobinSequence/close_valve/subj05/csvs_loaded/'
+work_dir = '/Jalori/RobinSequence/subj14/airway_18/'
 
 surface_file_dir = work_dir
 
-surf = pv.read(surface_file_dir + "airway_with_intersection.stl")
-surfCoarse = pv.read(work_dir+ "subj05_2000_cp.ply")
+surf = pv.read(surface_file_dir + "Airway_18_simulation_clip_extn_cap.stl")
+surfCoarse = pv.read(work_dir+ "subj14_airway_18_1000_cp.ply")
 
 #uncomment below if loading points from fcsv file
 # def read_fcsv(file_path):
@@ -72,8 +72,8 @@ p.show()
 
 #%% Manually select points to exclude
 
-coarse_pc = pv.PolyData(surfCoarse.points)
-# coarse_pc = new_cp
+# coarse_pc = pv.PolyData(surfCoarse.points)
+coarse_pc = new_cp
 remove_points, remove_ids = pointPickerRemove(coarse_pc, surf)
 
 
@@ -114,7 +114,7 @@ p.show()
 df = pd.DataFrame(data = new_cp.points, columns=["l", "p", "s"])
 
 # df = pd.DataFrame(data = remove_points, columns=["l", "p", "s"])
-df = df * 1e+3
+# df = df * 1e+3
 df['selected'] = np.ones(len(df))
 df['visible'] = np.ones(len(df))
 df['locked'] = np.ones(len(df))
@@ -127,12 +127,12 @@ df.to_csv(save_name)
 
 #%% Loop and save the cp locations !!! This gets dropped into the slicer python interpretor window
 
-save_dir = 'D:/Jalori/RobinSequence/close_valve/subj05/csvs_loaded/all_cp_fcsv_new/'
-prefix = "Airway_18_interface_cp_subj05_"
-transformSequenceID = 'vtkMRMLSequenceNode3' # name of sequence node with registration
+save_dir = 'D:/Jalori/RobinSequence/subj14/cp_fcsv/'
+prefix = "Airway_18_cp_subj14_"
+transformSequenceID = 'vtkMRMLSequenceNode7' # name of sequence node with registration
 # transformSequenceID = 'vtkMRMLTransformNode1'
 
-controlPointNode = getNode("subj05_interface_cp")
+controlPointNode = getNode("subj05_interface_cp_1")
 
 shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
 itemIDToClone = shNode.GetItemByDataNode(controlPointNode)
@@ -141,7 +141,7 @@ itemIDToClone = shNode.GetItemByDataNode(controlPointNode)
 transformSeq = slicer.mrmlScene.GetNodeByID(transformSequenceID)
 
 
-for node_idx in range(7):
+for node_idx in range(10):
     # get the transform
     
     transformNode = transformSeq.GetNthDataNode(node_idx)
@@ -161,9 +161,9 @@ for node_idx in range(7):
     
 #%% Load the cp locations as calulcated from slicer. Prior to this the control points are defined using remeshing, manually tweaked, and loaded into slicer with the dynamic registration computed
 
-work_dir = 'D:/Jalori/RobinSequence/close_valve/subj05/csvs_loaded/fcsv_18/'
+work_dir = 'D:/Jalori/RobinSequence/subj14/cp_fcsv/porous_frame/'
 cmap =  plt.cm.get_cmap("jet", 10)
-cp_files = sorted(glob.glob(work_dir + "Airway_18_interface_cp_subj05_*.fcsv"))
+cp_files = sorted(glob.glob(work_dir + "Airway_18_cp_subj14_*.fcsv"))
 
 dfs_save = []
 p = pv.Plotter()
@@ -191,7 +191,7 @@ df_periodic = dfs_save.copy()
 # df_periodic[-1] = df_periodic[0]
 # df_periodic = np.append(df_periodic, np.atleast_3d(np.transpose(np.stack(np.atleast_3d(df_periodic[0]), axis = 1))), axis = 0)
 # df_periodic = [df_periodic] + [np.transpose(np.stack(np.atleast_3d(df_periodic[0]), axis = 1))]
-df_periodic = df_periodic + [df_periodic[0]]
+# df_periodic = df_periodic + [df_periodic[0]]
 
 #%% Stack all of the control points into arrays
 
@@ -218,12 +218,23 @@ for count,df in enumerate(df_periodic):
 
 #%% Run the interpolation
        
-dt_cfd = 0.0001
+dt_cfd = 0.00025
 start_time = 0
-period_length = 0.7 # amount of time for each cycle
+period_length = 0.1 # amount of time for each cycle
 dt_ct = 0.1
 new_time = np.arange(start_time, period_length+0.0000001, dt_cfd)    
-x_new, y_new, z_new = interpolate_controlPoints_time(df_periodic, dt_ct, new_time, show=True)
+x_new2, y_new2, z_new2 = interpolate_controlPoints_time(df_periodic, dt_ct, new_time, show=True)
+
+
+#%%replace x_new with x_new2
+
+x_new_ori, y_new_ori, z_new_ori = x_new, y_new, z_new
+
+for i in range(len(x_new2)):
+    for j in range(len(x_new2[0])):
+        x_new[200 + i, j] = x_new2[i, j]
+        x_new[200 + i, j] = x_new2[i, j]
+        x_new[200 + i, j] = x_new2[i, j]
 
 
 
@@ -241,22 +252,128 @@ df_periodic_star.to_csv(work_dir +"StarControlPoinstFull_2mmSpacing_Periodic_5Cy
 # df_periodic_star = periodic_star_table_IncDisp_fromArraysV2(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=0.7)  
 # df_periodic_star = df_periodic_star*1e-3
 # df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_0001s_cycle_whole2.csv", index=False)
-work_dir = 'D:/Jalori/RobinSequence/close_valve/subj05/csvs_loaded/all_cp_csv/'
-end_time = 2.1
+work_dir = 'D:/Jalori/RobinSequence/subj14/cp_csv_dt001/'
+end_time = 3.0
 start_time_split = 0.0
 dt_file = 0.01
+dt_cfd = 0.001
 iter = np.arange(start_time_split, end_time, dt_file)
 
 for i in iter:
-    df_periodic_star = reference_periodic_star_table_IncDisp_fromArrays_split_01(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=i, div=70, cycle_len=0.7)
+    df_periodic_star = reference_periodic_star_table_IncDisp_fromArrays_split_01(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=i, div=100, cycle_len=1.0)
     df_periodic_star = df_periodic_star*1e-3
-    df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_reference_subj05_interface_0001s_cycle{int(i*100+0.001)}.csv", index=False)
+    df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_reference_subj14_interface_001s_cycle{int(i*100+0.001)}.csv", index=False)
 
 # df_periodic_star = periodic_star_table_IncDisp_fromArrays_split(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=0.7, div=7, cycle_len=0.7)
 # df_periodic_star = df_periodic_star*1e-3
 # df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_0001s_cycle7.csv", index=False)
 
 
+#%% Create the datafrom for star - incremental displacement()
+
+work_dir = 'D:/Jalori/RobinSequence/subj14/cp_sparse_csv_dt001_2/'
+end_time = 3.0
+start_time_split = 0.0
+dt_file = 0.001
+dt_cfd = 0.001
+iter = np.arange(start_time_split, end_time, dt_file)
+
+def star_motion_table_split_incDisp(X, Y, Z, start_time=0.0, dt=0.1, dim=3, n_cycles=3, div_per_cycle=10, cycle_len=1.0):
+    """
+    Modified function for exporting StarCCM motion table - 1/16/2025
+    This version of the function exports a sparse version of the CP where the CP locations are updated as new rows for every time-step. StarCCM does not keep 
+    row correspondence with CP ids
+
+    Input is X,Y,Z arrays X[time, positions]
+    dt: delta time between each defined cp
+    n_cycles: number of cycles to repeat for periodic simulation
+    cycle_len: period length (s)
+    Start_time: start time of this table. recomend that tables are split to only contain 0.01s of data. Otherwise files get too large.
+
+
+    """
+    
+    n_time_points = int(len(X[:,0]) * (1/div_per_cycle)) + 1
+    n_control_points = len(X[0,:])
+    print(n_time_points)
+    
+    
+    if start_time >= cycle_len:
+        start_time_local = start_time % cycle_len
+        start_time_index = int((start_time_local/cycle_len)*len(X[:,0]))
+        print(start_time_index)
+
+    else:
+        start_time_index = int((start_time/cycle_len)*len(X[:,0]))
+        print(start_time_index)
+    
+    
+    position_list = []
+    position_list.append(pd.DataFrame(data=X[start_time_index:start_time_index+n_time_points-1,:].flatten(), columns=['X']))
+    position_list.append(pd.DataFrame(data=Y[start_time_index:start_time_index+n_time_points-1,:].flatten(), columns=['Y']))
+    position_list.append(pd.DataFrame(data=Z[start_time_index:start_time_index+n_time_points-1,:].flatten(), columns=['Z']))
+    
+    df_positions = pd.concat(position_list, axis=1)
+    # print(df_positions)
+    
+    disp_table = np.zeros(((n_time_points-1) * n_control_points, n_time_points * dim))
+    column_list = []
+    
+    column_x = "X[t={:1.5f}s]".format(start_time)
+    column_y = "Y[t={:1.5f}s]".format(start_time)
+    column_z = "Z[t={:1.5f}s]".format(start_time)
+    
+    column_list.append(column_x)
+    column_list.append(column_y)
+    column_list.append(column_z)
+    
+    
+    for count in range(1, n_time_points):
+        
+        if start_time >= cycle_len:
+            start_time_local = start_time % cycle_len
+            time_count = count + int((start_time_local/cycle_len)*len(X[:,0]))
+        else:
+            time_count = count + int((start_time/cycle_len)*len(X[:,0]))
+        time =  count * dt
+        
+        
+        time = count * dt
+        cp_range_start = count  
+        
+        
+        column_x = "X[t={:1.5f}s]".format(time + start_time)
+        column_y = "Y[t={:1.5f}s]".format(time + start_time)
+        column_z = "Z[t={:1.5f}s]".format(time + start_time)
+        
+        column_list.append(column_x)
+        column_list.append(column_y)
+        column_list.append(column_z)
+        
+        # calculate displacement
+        dx = X[time_count,:] - X[time_count-1,:]
+        dy = Y[time_count,:] - Y[time_count-1,:]
+        dz = Z[time_count,:] - Z[time_count-1,:]
+        
+        # populate displacement table
+        disp_table[(count-1)*n_control_points:(count-1)*n_control_points + n_control_points, count * dim] = dx
+        disp_table[(count-1)*n_control_points:(count-1)*n_control_points + n_control_points, count * dim + 1] = dy
+        disp_table[(count-1)*n_control_points:(count-1)*n_control_points + n_control_points, count * dim + 2] = dz
+    
+        
+        
+    df_motion = pd.DataFrame(disp_table, columns = column_list)
+    
+    df_full = pd.concat([df_positions, df_motion], axis=1)
+    
+    
+    return df_full
+
+for i in iter:
+
+    df_periodic_star = star_motion_table_split_incDisp(x_new, y_new, z_new, dt=dt_cfd, start_time=i, div_per_cycle=1000, cycle_len=1.0)
+    df_periodic_star = df_periodic_star*1e-3
+    df_periodic_star.to_csv(work_dir + f"subj14_sparse_cp_function_{int(i*1000+0.001)}.csv", index=False)
 #%% Create the datafrom for star - target pos
 
 work_dir = 'D:/Jalori/RobinSequence/4DCT/Subj05/reference_update_cp_csv_target_pos/'
