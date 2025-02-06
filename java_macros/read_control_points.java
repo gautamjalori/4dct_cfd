@@ -25,13 +25,16 @@ public class read_control_points extends StarMacro {
 
     Simulation simulation_0 = 
       getActiveSimulation();
-
+    /*  
+    FileTable fileTable_ini = 
+      (FileTable) simulation_0.getTableManager().createFromFile(resolvePath("D:\\Jalori\\RobinSequence\\Subj14\\ini_file\\subj14_sparse_cp_function_00.csv"), null);
+    */
     File f = null;
     String[] paths;
     int numFiles = 0;
 
 
-    f = new File("D:/Jalori/RobinSequence/subj14/cp_sparse_csv_dt001_2/");
+    f = new File("D:/Jalori/RobinSequence/4DCT/Subj05/single_dt_csvs/");
     paths = f.list();
 
 

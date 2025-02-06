@@ -19,7 +19,7 @@ public class rs_interfaceBoundary extends StarMacro {
 
     int n_periods = 300;
     int period_count = 0;
-    Double period_length = 0.01;
+    Double period_length = 0.01; 
     // String control_point_file_prefix = "StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_ptj05_01s_cycle";
 
     File f = null;
@@ -61,7 +61,7 @@ public class rs_interfaceBoundary extends StarMacro {
     }
 
     BoundaryInterface boundaryInterface_0 = ((BoundaryInterface) simulation_0.getInterfaceManager().getInterface("interface_PM"));
-    boundaryInterface_0.swapBoundaries();
+    // boundaryInterface_0.swapBoundaries();
       
     Double time1 = getActiveSimulation().getSolution().getPhysicalTime();
     long round_time = Math.round(time1 * 100.0)/10;
@@ -117,8 +117,8 @@ public class rs_interfaceBoundary extends StarMacro {
       
       simulation_0.println("Simulation Time: " + time);
       
-      /*
-      if ((time >= 0.3) && (time < 0.32)){
+      
+      if ((time >= 0.25) && (time < 0.30)){
           //switch to PM - closing
 	  
           ScalarGlobalParameter scalarGlobalParameter_1 = 
@@ -128,23 +128,28 @@ public class rs_interfaceBoundary extends StarMacro {
 
           ScalarGlobalParameter scalarGlobalParameter_2 = ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampStart"));
           Units units_2 = ((Units) simulation_0.getUnitsManager().getObject("s"));
-          scalarGlobalParameter_2.getQuantity().setValueAndUnits(0.3, units_2);
+          scalarGlobalParameter_2.getQuantity().setValueAndUnits(0.25, units_2);
           
           ScalarGlobalParameter scalarGlobalParameter_3 = 
             ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("baffle"));
           Units units_3 = ((Units) simulation_0.getUnitsManager().getObject(""));
           scalarGlobalParameter_3.getQuantity().setValueAndUnits(0.0, units_3);
+          
+          ScalarGlobalParameter scalarGlobalParameter_4 = 
+            ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampDuration"));
+          Units units_4 = ((Units) simulation_0.getUnitsManager().getObject(""));
+          scalarGlobalParameter_4.getQuantity().setValueAndUnits(0.05, units_4);
 
           PorousBaffleInterface porousBaffleInterface_0 = 
           ((PorousBaffleInterface) simulation_0.get(ConditionTypeManager.class).get(PorousBaffleInterface.class));
           boundaryInterface_0.setInterfaceType(porousBaffleInterface_0);
       }
       
-      if ((time >= 0.32) && (time < 0.48)){
+      if ((time >= 0.30) && (time < 0.48)){
           // switch to baffle
           ScalarGlobalParameter scalarGlobalParameter_2 = ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampStart"));
           Units units_2 = ((Units) simulation_0.getUnitsManager().getObject("s"));
-          scalarGlobalParameter_2.getQuantity().setValueAndUnits(0.32, units_2);
+          scalarGlobalParameter_2.getQuantity().setValueAndUnits(0.30, units_2);
           
           ScalarGlobalParameter scalarGlobalParameter_3 = 
             ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("baffle"));
@@ -173,28 +178,33 @@ public class rs_interfaceBoundary extends StarMacro {
           Units units_3 = ((Units) simulation_0.getUnitsManager().getObject(""));
           scalarGlobalParameter_3.getQuantity().setValueAndUnits(0.0, units_3);
           
+          ScalarGlobalParameter scalarGlobalParameter_4 = 
+            ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampDuration"));
+          Units units_4 = ((Units) simulation_0.getUnitsManager().getObject(""));
+          scalarGlobalParameter_4.getQuantity().setValueAndUnits(0.02, units_4);
+          
           PorousBaffleInterface porousBaffleInterface_0 = 
           ((PorousBaffleInterface) simulation_0.get(ConditionTypeManager.class).get(PorousBaffleInterface.class));
           boundaryInterface_0.setInterfaceType(porousBaffleInterface_0);
       }
       
-      if ((time >= 0.5) && (time < 0.6)){
+      if ((time >= 0.5) && (time < 1.0)){
           InternalInterface internalInterface_0 = 
           ((InternalInterface) simulation_0.get(ConditionTypeManager.class).get(InternalInterface.class));
           boundaryInterface_0.setInterfaceType(internalInterface_0);
       }
       
       
-      if (time == 0.6){
+      if (time == 0.5){
           boundaryInterface_0.swapBoundaries();
       }
       
-      if (time == 1.2){
+      if (time == 1.0){
           boundaryInterface_0.swapBoundaries();
       }
       
       
-      if ((time >= 1.5) && (time < 1.52)){
+      if ((time >= 1.25) && (time < 1.30)){
           //switch to PM - closing
 	  
           ScalarGlobalParameter scalarGlobalParameter_1 = 
@@ -204,18 +214,23 @@ public class rs_interfaceBoundary extends StarMacro {
 
           ScalarGlobalParameter scalarGlobalParameter_2 = ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampStart"));
           Units units_2 = ((Units) simulation_0.getUnitsManager().getObject("s"));
-          scalarGlobalParameter_2.getQuantity().setValueAndUnits(1.5, units_2);
+          scalarGlobalParameter_2.getQuantity().setValueAndUnits(1.25, units_2);
+          
+          ScalarGlobalParameter scalarGlobalParameter_4 = 
+            ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampDuration"));
+          Units units_4 = ((Units) simulation_0.getUnitsManager().getObject(""));
+          scalarGlobalParameter_4.getQuantity().setValueAndUnits(0.05, units_4);
 
           PorousBaffleInterface porousBaffleInterface_0 = 
           ((PorousBaffleInterface) simulation_0.get(ConditionTypeManager.class).get(PorousBaffleInterface.class));
           boundaryInterface_0.setInterfaceType(porousBaffleInterface_0);
       }
       
-      if ((time >= 1.52) && (time < 1.68)){
+      if ((time >= 1.30) && (time < 1.48)){
           // switch to baffle
           ScalarGlobalParameter scalarGlobalParameter_2 = ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampStart"));
           Units units_2 = ((Units) simulation_0.getUnitsManager().getObject("s"));
-          scalarGlobalParameter_2.getQuantity().setValueAndUnits(1.52, units_2);
+          scalarGlobalParameter_2.getQuantity().setValueAndUnits(1.30, units_2);
           
           ScalarGlobalParameter scalarGlobalParameter_3 = 
             ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("baffle"));
@@ -227,7 +242,7 @@ public class rs_interfaceBoundary extends StarMacro {
           boundaryInterface_0.setInterfaceType(baffleInterface_0);
       }
       
-      if ((time >= 1.68) && (time < 1.70)){
+      if ((time >= 1.48) && (time < 1.50)){
           //switch to PM - opening
           ScalarGlobalParameter scalarGlobalParameter_1 = 
             ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("closing_FLAG"));
@@ -236,20 +251,33 @@ public class rs_interfaceBoundary extends StarMacro {
 
           ScalarGlobalParameter scalarGlobalParameter_2 = ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampStart"));
           Units units_2 = ((Units) simulation_0.getUnitsManager().getObject("s"));
-          scalarGlobalParameter_2.getQuantity().setValueAndUnits(1.68, units_2);
+          scalarGlobalParameter_2.getQuantity().setValueAndUnits(1.48, units_2);
+          
+          ScalarGlobalParameter scalarGlobalParameter_4 = 
+            ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampDuration"));
+          Units units_4 = ((Units) simulation_0.getUnitsManager().getObject(""));
+          scalarGlobalParameter_4.getQuantity().setValueAndUnits(0.02, units_4);
           
           PorousBaffleInterface porousBaffleInterface_0 = 
           ((PorousBaffleInterface) simulation_0.get(ConditionTypeManager.class).get(PorousBaffleInterface.class));
           boundaryInterface_0.setInterfaceType(porousBaffleInterface_0);
       }
       
-      if ((time >= 1.70) && (time < 2.7)){
+      if ((time >= 1.50) && (time < 2.0)){
           InternalInterface internalInterface_0 = 
           ((InternalInterface) simulation_0.get(ConditionTypeManager.class).get(InternalInterface.class));
           boundaryInterface_0.setInterfaceType(internalInterface_0);
       }
       
-      if ((time >= 2.7) && (time < 2.72)){
+      if (time == 1.5){
+          boundaryInterface_0.swapBoundaries();
+      }
+      
+      if (time == 2.0){
+          boundaryInterface_0.swapBoundaries();
+      }
+      
+      if ((time >= 2.25) && (time < 2.3)){
           //switch to PM - closing
 	  
           ScalarGlobalParameter scalarGlobalParameter_1 = 
@@ -259,18 +287,23 @@ public class rs_interfaceBoundary extends StarMacro {
 
           ScalarGlobalParameter scalarGlobalParameter_2 = ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampStart"));
           Units units_2 = ((Units) simulation_0.getUnitsManager().getObject("s"));
-          scalarGlobalParameter_2.getQuantity().setValueAndUnits(2.7, units_2);
+          scalarGlobalParameter_2.getQuantity().setValueAndUnits(2.25, units_2);
+          
+          ScalarGlobalParameter scalarGlobalParameter_4 = 
+            ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampDuration"));
+          Units units_4 = ((Units) simulation_0.getUnitsManager().getObject(""));
+          scalarGlobalParameter_4.getQuantity().setValueAndUnits(0.05, units_4);
 
           PorousBaffleInterface porousBaffleInterface_0 = 
           ((PorousBaffleInterface) simulation_0.get(ConditionTypeManager.class).get(PorousBaffleInterface.class));
           boundaryInterface_0.setInterfaceType(porousBaffleInterface_0);
       }
       
-      if ((time >= 2.72) && (time < 2.88)){
+      if ((time >= 2.30) && (time < 2.48)){
           // switch to baffle
           ScalarGlobalParameter scalarGlobalParameter_2 = ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampStart"));
           Units units_2 = ((Units) simulation_0.getUnitsManager().getObject("s"));
-          scalarGlobalParameter_2.getQuantity().setValueAndUnits(2.72, units_2);
+          scalarGlobalParameter_2.getQuantity().setValueAndUnits(2.30, units_2);
           
           ScalarGlobalParameter scalarGlobalParameter_3 = 
             ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("baffle"));
@@ -282,7 +315,7 @@ public class rs_interfaceBoundary extends StarMacro {
           boundaryInterface_0.setInterfaceType(baffleInterface_0);
       }
       
-      if ((time >= 2.88) && (time < 2.90)){
+      if ((time >= 2.48) && (time < 2.50)){
           //switch to PM - opening
           ScalarGlobalParameter scalarGlobalParameter_1 = 
             ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("closing_FLAG"));
@@ -291,20 +324,27 @@ public class rs_interfaceBoundary extends StarMacro {
 
           ScalarGlobalParameter scalarGlobalParameter_2 = ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampStart"));
           Units units_2 = ((Units) simulation_0.getUnitsManager().getObject("s"));
-          scalarGlobalParameter_2.getQuantity().setValueAndUnits(2.88, units_2);
+          scalarGlobalParameter_2.getQuantity().setValueAndUnits(2.48, units_2);
+          
+          ScalarGlobalParameter scalarGlobalParameter_4 = 
+            ((ScalarGlobalParameter) simulation_0.get(GlobalParameterManager.class).getObject("rampDuration"));
+          Units units_4 = ((Units) simulation_0.getUnitsManager().getObject(""));
+          scalarGlobalParameter_4.getQuantity().setValueAndUnits(0.02, units_4);
           
           PorousBaffleInterface porousBaffleInterface_0 = 
           ((PorousBaffleInterface) simulation_0.get(ConditionTypeManager.class).get(PorousBaffleInterface.class));
           boundaryInterface_0.setInterfaceType(porousBaffleInterface_0);
       }
       
-      if ((time >= 2.90) && (time < 3.6)){
+      if ((time >= 2.50) && (time < 3.0)){
           InternalInterface internalInterface_0 = 
           ((InternalInterface) simulation_0.get(ConditionTypeManager.class).get(InternalInterface.class));
           boundaryInterface_0.setInterfaceType(internalInterface_0);
       }
-      */
-
+      
+      if (time == 2.5){
+          boundaryInterface_0.swapBoundaries();
+      }
 
     }
   }

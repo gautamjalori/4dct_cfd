@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Apr  8 16:13:07 2024
+Created on Wed Feb  5 11:38:06 2025
 
 @author: jalori
 """
@@ -159,9 +159,49 @@ for node_idx in range(10):
     print(outputFileName)
     slicer.util.saveNode(clonedControlPointNode, outputFileName)
     
-#%% Load the cp locations as calulcated from slicer. Prior to this the control points are defined using remeshing, manually tweaked, and loaded into slicer with the dynamic registration computed
+
+#%% read two fcsv frames which are before and after the collapse frames 
 
 work_dir = 'D:/Jalori/RobinSequence/Subj14/cp_fcsv/porous_frame/'
+cmap =  plt.cm.get_cmap("jet", 10)
+cp_files = sorted(glob.glob(work_dir + "Airway_18_cp_subj14__0*.fcsv"))
+
+dfs_save = []
+p = pv.Plotter()
+polys = []
+for count,file in enumerate(cp_files):
+    
+    print(file)
+    df_mod = pd.read_csv(file, skiprows=3, 
+                     names=['id','X','Y','Z','ow','ox','oy','oz','vis','sel','lock','label','desc','associatedNodeID','no_idea','no_idea2'])
+
+    df_star = df_mod[["X", "Y", "Z"]]
+    dfs_save.append(df_star)
+
+    poly = pv.PolyData(np.array([df_mod.X, df_mod.Y, df_mod.Z]).T)
+    polys.append(poly)
+
+    p.add_mesh(poly, color=cmap(count)[0:3])
+p.show()
+
+#%% define collapse frame df
+
+df_collapse = dfs_save.copy()
+
+#%% create points to replace the collapse frames
+
+period_length = 0.1 # amount of time for each cycle
+collapse_frames = 3
+dt_cfd = period_length/(collapse_frames+1)
+start_time = 0
+dt_ct = 0.1
+new_time = np.arange(start_time, period_length+0.0000001, dt_cfd)    
+x_collapse, y_collapse, z_collapse = interpolate_controlPoints_time_not_periodic(df_collapse, dt_ct, new_time, show=True)
+
+    
+#%% Load the cp locations as calulcated from slicer. Prior to this the control points are defined using remeshing, manually tweaked, and loaded into slicer with the dynamic registration computed
+
+work_dir = 'D:/Jalori/RobinSequence/Subj14/cp_fcsv/'
 cmap =  plt.cm.get_cmap("jet", 10)
 cp_files = sorted(glob.glob(work_dir + "Airway_18_cp_subj14__0*.fcsv"))
 
@@ -191,9 +231,13 @@ df_periodic = dfs_save.copy()
 # df_periodic[-1] = df_periodic[0]
 # df_periodic = np.append(df_periodic, np.atleast_3d(np.transpose(np.stack(np.atleast_3d(df_periodic[0]), axis = 1))), axis = 0)
 # df_periodic = [df_periodic] + [np.transpose(np.stack(np.atleast_3d(df_periodic[0]), axis = 1))]
-# df_periodic = df_periodic + [df_periodic[0]]
+df_periodic = df_periodic + [df_periodic[0]]
 
-#%% Stack all of the control points into arrays
+#%%replace old collapse frames points
+
+first_airway_no = 18
+first_collapse_airway = 21  # index number of first collapse frame in original data set 
+collapse_frames = 3  # number of collapse frames
 
 n_images = len(df_periodic)
 n_points = len(df_periodic[0])
@@ -205,9 +249,16 @@ x_all = np.zeros((n_images, n_points))
 y_all = np.zeros((n_images, n_points))
 z_all = np.zeros((n_images, n_points))
 
-
+i = 0
+frame = 0
 for count,df in enumerate(df_periodic):
-    print(df)
+    if i == first_collapse_airway - first_airway_no + frame and frame < collapse_frames:
+        df.X = x_collapse[frame+1]
+        df.Y = y_collapse[frame+1]
+        df.Z = z_collapse[frame+1]
+        
+        frame = frame + 1
+        print(frame)
     x = df.X
     y = df.Y
     z = df.Z
@@ -215,28 +266,17 @@ for count,df in enumerate(df_periodic):
     x_all[count,:] = x
     y_all[count,:] = y
     z_all[count,:] = z
+    i = i+1
 
 
 #%% Run the interpolation
        
-dt_cfd = 0.1/4
+dt_cfd = 0.001
 start_time = 0
-period_length = 0.1 # amount of time for each cycle
+period_length = 1.0 # amount of time for each cycle
 dt_ct = 0.1
 new_time = np.arange(start_time, period_length+0.0000001, dt_cfd)    
 x_new, y_new, z_new = interpolate_controlPoints_time(df_periodic, dt_ct, new_time, show=True)
-
-
-#%%replace x_new with x_new2
-
-x_new_ori, y_new_ori, z_new_ori = x_new, y_new, z_new
-
-for i in range(len(x_new)):
-    for j in range(len(x_new[0])):
-        x_new[200 + i, j] = x_new[i, j]
-        x_new[200 + i, j] = x_new[i, j]
-        x_new[200 + i, j] = x_new[i, j]
-
 
 
 #%% create new df structure for repeating and saving - Total Displcement
@@ -253,17 +293,17 @@ df_periodic_star.to_csv(work_dir +"StarControlPoinstFull_2mmSpacing_Periodic_5Cy
 # df_periodic_star = periodic_star_table_IncDisp_fromArraysV2(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=0.7)  
 # df_periodic_star = df_periodic_star*1e-3
 # df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_0001s_cycle_whole2.csv", index=False)
-work_dir = 'D:/Jalori/RobinSequence/4DCT/Subj05/single_dt_csvs/'
-end_time = 2.1
+work_dir = 'D:/Jalori/RobinSequence/Subj14/new_interpolation/single_dt_csvs/'
+end_time = 3.0
 start_time_split = 0.0
-dt_file = 0.0001
-dt_cfd = 0.0001
+dt_file = 0.001
+dt_cfd = 0.001
 iter = np.arange(start_time_split, end_time, dt_file)
 
 for i in iter:
-    df_periodic_star = reference_periodic_star_table_IncDisp_fromArrays_split_01(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=i, div=7000, cycle_len=0.7)
+    df_periodic_star = reference_periodic_star_table_IncDisp_fromArrays_split_01(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=i, div=1000, cycle_len=1.0)
     df_periodic_star = df_periodic_star*1e-3
-    df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_reference_subj05_single_file_cycle{int(i*10000+0.001)}.csv", index=False)
+    df_periodic_star.to_csv(work_dir +f"StarControlPoinstFull_2mmSpacing_Periodic_5Cycles_Inc_interpolated_reference_subj14_single_file_cycle{int(i*1000+0.001)}.csv", index=False)
 
 # df_periodic_star = periodic_star_table_IncDisp_fromArrays_split(x_new, y_new, z_new, dt=dt_cfd, n_cycles=1, start_time=0.7, div=7, cycle_len=0.7)
 # df_periodic_star = df_periodic_star*1e-3

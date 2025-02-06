@@ -396,7 +396,7 @@ def reference_periodic_star_table_IncDisp_fromArrays_split(X,Y,Z, dt=0.1, n_cycl
     if start_time >= cycle_len:
         start_time_local = start_time % cycle_len
         temp_index  = int(round(start_time_local*(1/dt), 5))
-        print(temp_index)
+        # print(temp_index)
     else:
         temp_index  = int(round(start_time*(1/dt), 5))
         print(temp_index)
@@ -624,6 +624,65 @@ def interpolate_controlPoints_time(df_CT, dt, new_time_array, show=True, n_demo_
     cs_x = CubicSpline(time_CT, x_all, axis=0, bc_type='periodic')
     cs_y = CubicSpline(time_CT, y_all, axis=0, bc_type='periodic')
     cs_z = CubicSpline(time_CT, z_all, axis=0, bc_type='periodic')
+
+    x_new = cs_x(new_time_array)
+    y_new = cs_y(new_time_array)
+    z_new = cs_z(new_time_array)
+
+
+    if show:
+
+        p = pv.Plotter(shape=(1,n_demo_images))
+        cp_ids = np.random.randint(0, n_points, n_demo_images)
+        
+        for count,cp_id in enumerate(cp_ids):
+        
+            poly_image_data = pv.PolyData(np.array([x_all[:,cp_id], y_all[:,cp_id], z_all[:, cp_id]]).T)
+            poly_fine = pv.PolyData(np.array([cs_x(new_time_array)[:,cp_id], cs_y(new_time_array)[:,cp_id], cs_z(new_time_array)[:,cp_id]]).T)
+            
+            p.subplot(0,count)
+            p.add_mesh(poly_fine, color='red', render_points_as_spheres=True, point_size=15)
+            p.add_mesh(poly_image_data, color='blue', render_points_as_spheres=True, point_size=20)
+            p.add_mesh(poly_image_data.points[0], color='green', render_points_as_spheres=True, point_size=20)
+            p.background_color='white'
+        
+        p.show()
+        
+    return x_new, y_new, z_new
+
+def interpolate_controlPoints_time_not_periodic(df_CT, dt, new_time_array, show=True, n_demo_images=5):
+    """
+    Perform temporal interpolation between a coarse set of control points.
+    
+    interploation is a cubic spline.
+
+    """
+    
+    n_images = len(df_CT)
+    n_points = len(df_CT[0])
+    
+    dt = 0.1
+    time_CT = np.linspace(0, (n_images-1)*dt, n_images)
+    
+    x_all = np.zeros((n_images, n_points))
+    y_all = np.zeros((n_images, n_points))
+    z_all = np.zeros((n_images, n_points))
+    
+    
+    for count,df in enumerate(df_CT):
+        x = df.X
+        y = df.Y
+        z = df.Z
+        
+        x_all[count,:] = x
+        y_all[count,:] = y
+        z_all[count,:] = z
+
+    
+    #Interpolate Function
+    cs_x = CubicSpline(time_CT, x_all, axis=0, bc_type='not-a-knot')
+    cs_y = CubicSpline(time_CT, y_all, axis=0, bc_type='not-a-knot')
+    cs_z = CubicSpline(time_CT, z_all, axis=0, bc_type='not-a-knot')
 
     x_new = cs_x(new_time_array)
     y_new = cs_y(new_time_array)
