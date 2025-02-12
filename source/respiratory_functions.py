@@ -206,14 +206,3 @@ plt.plot(time, Q)
 work_dir = 'D:/Jalori/RobinSequence/Subj14/data.csv'  
 DF.to_csv(work_dir)
 
-
-
-
-
-
-
-
-
-
-
-

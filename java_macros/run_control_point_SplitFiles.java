@@ -15,6 +15,7 @@ import star.motion.*;
 
 public class run_control_point_SplitFiles extends StarMacro {
 
+
   public void execute() {
     execute0();
   }
@@ -70,7 +71,6 @@ public class run_control_point_SplitFiles extends StarMacro {
     long round_time = Math.round(time/period_length);
     period_count = (int) round_time; 
     simulation_0.println("Period Count: " + period_count);
-    
 
     while(period_count <= n_periods-1){
 
@@ -117,7 +117,6 @@ public class run_control_point_SplitFiles extends StarMacro {
       time = getActiveSimulation().getSolution().getPhysicalTime();
       
       simulation_0.println("Simulation Time: " + time);
-      
 
 
 
